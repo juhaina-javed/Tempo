@@ -459,11 +459,11 @@
 </div>
 
 <footer>
-  <span class="footer-note">Questions? <a href="mailto:people@lyric.tech">people@lyric.tech</a></span>
+  <span class="footer-note">Questions? <a href="/cdn-cgi/l/email-protection#2050454f504c45604c595249430e54454348"><span class="__cf_email__" data-cfemail="cebeaba1bea2ab8ea2b7bca7ade0baabada6">[email&#160;protected]</span></a></span>
   <span class="footer-note">Powered by Lyric People Ops</span>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SUGGESTIONS = [
   "When will I get my laptop?",
   "Who handles payroll questions?",
@@ -474,6 +474,7 @@ const SUGGESTIONS = [
 
 let history = [];
 let msgCount = 0;
+let lastBotReply = '';
 
 const messagesEl = document.getElementById('messages');
 const inputEl = document.getElementById('user-input');
@@ -554,24 +555,28 @@ function removeTyping() {
   if (t) t.remove();
 }
 
-function addFeedback(userQ) {
+function addFeedback(userQ, botReply) {
   const row = document.createElement('div');
   row.className = 'feedback-row';
+  row.dataset.question = userQ;
+  row.dataset.answer = botReply;
   row.innerHTML = `
-    <button class="fb-btn good" onclick="feedback(this,'helpful','${userQ.replace(/'/g,"\\\'").replace(/\n/g,' ').slice(0,80)}')">👍 Helpful</button>
-    <button class="fb-btn bad"  onclick="feedback(this,'unhelpful','${userQ.replace(/'/g,"\\\'").replace(/\n/g,' ').slice(0,80)}')">👎 Not helpful</button>
+    <button class="fb-btn good" onclick="feedback(this,'helpful')">👍 Helpful</button>
+    <button class="fb-btn bad"  onclick="feedback(this,'unhelpful')">👎 Not helpful</button>
   `;
   messagesEl.appendChild(row);
   scroll();
 }
 
-function feedback(btn, type, q) {
+function feedback(btn, type) {
   const row = btn.closest('.feedback-row');
+  const q = row.dataset.question || '';
+  const a = row.dataset.answer || '';
+  logFeedback(q, type, a);
   if (type === 'helpful') {
     row.innerHTML = '<span style="font-size:11px;color:var(--text-3);font-family:JetBrains Mono,monospace;text-transform:uppercase;letter-spacing:0.04em">Thanks — glad that helped!</span>';
   } else {
     row.innerHTML = '<span style="font-size:11px;color:var(--text-3)">Sorry about that! Email <a href="mailto:people@lyric.tech" style="color:var(--lyric-blue)">people@lyric.tech</a> and we\'ll circle back to you.</span>';
-    logFeedback(q, 'unhelpful');
   }
   scroll();
 }
@@ -587,12 +592,12 @@ function scroll() {
   setTimeout(() => { messagesEl.scrollTop = messagesEl.scrollHeight; }, 30);
 }
 
-async function logFeedback(question, type) {
+async function logFeedback(question, type, answer) {
   try {
     await fetch('/api/log', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question, type, ts: new Date().toISOString() })
+      body: JSON.stringify({ question, type, answer: answer || '', ts: new Date().toISOString() })
     });
   } catch(e) {}
 }
@@ -608,9 +613,6 @@ async function sendMessage() {
   history.push({ role: 'user', content: text });
   addTyping();
 
-  // Log FAQ
-  logFeedback(text, 'asked');
-
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
@@ -622,9 +624,11 @@ async function sendMessage() {
     const reply = data.reply || "I'm having trouble right now. Please email people@lyric.tech and we'll get back to you!";
     history.push({ role: 'assistant', content: reply });
     addBotMessage(reply);
+    lastBotReply = reply;
     msgCount++;
     if (msgCount % 4 === 0) showSuggestions();
-    addFeedback(text);
+    logFeedback(text, 'asked', reply);
+    addFeedback(text, reply);
   } catch(e) {
     removeTyping();
     addBotMessage("Something went wrong on my end. Please email **people@lyric.tech** and we'll help you directly.");
@@ -634,15 +638,4 @@ async function sendMessage() {
 
 // Auto-resize textarea
 inputEl.addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-});
-
-inputEl.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-});
-
-init();
-</script>
-</body>
-</html>
+  this.style.height = 'auto
