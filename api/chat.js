@@ -1,11 +1,11 @@
 // api/chat.js — Vercel serverless function
-// Reads knowledge base from Google Sheets, calls Anthropic Claude
+// Reads knowledge base from Google Sheets, calls Google Gemini (free tier)
 
-const SHEET_ID = process.env.SHEET_ID;
-const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
-const SHEET_TAB = process.env.SHEET_TAB || 'KB'; // tab name in your sheet
+const SHEET_ID  = process.env.SHEET_ID;
+const GEMINI_KEY = process.env.GEMINI_API_KEY;
+const SHEET_TAB = process.env.SHEET_TAB || 'KB';
 
-// Cache KB for 5 minutes to avoid hitting Sheets API on every message
+// Cache KB for 5 minutes to avoid hitting Sheets on every message
 let kbCache = { data: null, ts: 0 };
 const CACHE_TTL = 5 * 60 * 1000;
 
@@ -13,19 +13,16 @@ async function fetchKB() {
   const now = Date.now();
   if (kbCache.data && now - kbCache.ts < CACHE_TTL) return kbCache.data;
 
-  // Google Sheets public CSV export URL
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_TAB)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Could not fetch knowledge base from Google Sheets');
   const csv = await res.text();
 
-  // Parse CSV (handles quoted fields with commas)
   const rows = parseCSV(csv);
   if (rows.length < 2) return [];
 
   const headers = rows[0].map(h => h.toLowerCase().trim());
 
-  // Map to your actual Google Sheet column headers
   const topicIdx    = headers.indexOf('question');
   const infoIdx     = headers.indexOf('answer');
   const categoryIdx = headers.indexOf('category');
@@ -96,7 +93,7 @@ HOW TO BEHAVE:
 - When ending your answer, always include the escalation contact. If there's a Slack handle, mention it alongside the email: e.g. "Questions? Reach **name@lyric.tech** or **@slackhandle** on Slack."
 - If no escalation contact is listed for a topic, use people@lyric.tech.
 - Be warm, encouraging, and human. These people just accepted a job offer — they're excited and possibly nervous.
-- Keep answers concise: 2–4 short paragraphs or a short bullet list. Don't pad.
+- Keep answers concise: 2-4 short paragraphs or a short bullet list. Don't pad.
 - Never call them "employees" — they're joining the team, use "you" or "your" naturally.
 - Use **bold** (with asterisks) sparingly for key info like email addresses, Slack handles, or important dates.
 - Do NOT show your reasoning or thinking steps — just give the answer.
@@ -114,37 +111,49 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'No messages provided' });
     }
 
-    // Validate history shape
     const safeHistory = history
       .filter(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
-      .slice(-20); // keep last 20 turns max
+      .slice(-20);
 
     const kb = await fetchKB();
     const systemPrompt = buildSystemPrompt(kb);
 
-    const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-opus-4-5',
-        max_tokens: 1024,
-        system: systemPrompt,
-        messages: safeHistory
-      })
-    });
+    // Gemini uses "user" and "model" roles (not "assistant")
+    const geminiContents = safeHistory.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    }));
 
-    if (!anthropicRes.ok) {
-      const err = await anthropicRes.text();
-      console.error('Anthropic error:', err);
-      return res.status(502).json({ error: 'AI service error', reply: "I'm having a bit of trouble right now. Please email **people@lyric.tech** and we'll help you directly." });
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: systemPrompt }]
+          },
+          contents: geminiContents,
+          generationConfig: {
+            maxOutputTokens: 1024,
+            temperature: 0.4
+          }
+        })
+      }
+    );
+
+    if (!geminiRes.ok) {
+      const err = await geminiRes.text();
+      console.error('Gemini error:', err);
+      return res.status(502).json({
+        error: 'AI service error',
+        reply: "I'm having a bit of trouble right now. Please email **people@lyric.tech** and we'll help you directly."
+      });
     }
 
-    const data = await anthropicRes.json();
-    const reply = data.content?.[0]?.text || "Sorry, I couldn't generate a response. Please email people@lyric.tech.";
+    const data = await geminiRes.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text
+      || "Sorry, I couldn't generate a response. Please email people@lyric.tech.";
 
     return res.status(200).json({ reply });
 
