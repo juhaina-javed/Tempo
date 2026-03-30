@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* Lyric Brand Colors */
     --lyric-blue: #2424F5;
     --lyric-blue-dark: #1a1ab8;
     --lyric-blue-light: #EEEEFF;
@@ -16,8 +15,6 @@
     --lyric-green: #00EF6B;
     --lyric-yellow: #F6EE19;
     --lyric-orange: #FE6007;
-
-    /* UI tokens */
     --bg: #F5F5F3;
     --surface: #FFFFFF;
     --surface2: #EDEDEB;
@@ -40,9 +37,7 @@
     --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.03);
     --shadow-lg: 0 4px 32px rgba(36,36,245,0.08);
   }
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background: var(--bg);
@@ -53,15 +48,6 @@
     align-items: center;
     -webkit-font-smoothing: antialiased;
   }
-
-  /* Mono utility — JetBrains Mono, always uppercase */
-  .mono {
-    font-family: 'JetBrains Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  /* ── Header ── */
   header {
     width: 100%;
     max-width: 760px;
@@ -70,13 +56,11 @@
     align-items: center;
     justify-content: space-between;
   }
-
   .logo {
     display: flex;
     align-items: center;
     gap: 12px;
   }
-
   .logo-mark {
     width: 38px;
     height: 38px;
@@ -88,9 +72,7 @@
     flex-shrink: 0;
     box-shadow: 0 2px 8px rgba(36,36,245,0.25);
   }
-
   .logo-mark svg { width: 18px; height: 18px; }
-
   .logo-text {
     font-family: 'JetBrains Mono', monospace;
     text-transform: uppercase;
@@ -99,7 +81,6 @@
     letter-spacing: 0.08em;
     color: var(--text);
   }
-
   .logo-tag {
     font-family: 'JetBrains Mono', monospace;
     text-transform: uppercase;
@@ -109,13 +90,11 @@
     letter-spacing: 0.1em;
     margin-top: 1px;
   }
-
   .header-right {
     display: flex;
     align-items: center;
     gap: 8px;
   }
-
   .status-pill {
     display: flex;
     align-items: center;
@@ -130,7 +109,6 @@
     padding: 5px 12px;
     border-radius: 20px;
   }
-
   .status-dot {
     width: 6px;
     height: 6px;
@@ -138,13 +116,10 @@
     background: var(--green);
     animation: pulse-dot 2s ease-in-out infinite;
   }
-
   @keyframes pulse-dot {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
   }
-
-  /* ── Chat container ── */
   .chat-wrap {
     width: 100%;
     max-width: 760px;
@@ -153,7 +128,6 @@
     display: flex;
     flex-direction: column;
   }
-
   .chat-box {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -165,8 +139,6 @@
     min-height: 500px;
     overflow: hidden;
   }
-
-  /* ── Messages ── */
   #messages {
     flex: 1;
     overflow-y: auto;
@@ -176,25 +148,20 @@
     gap: 18px;
     scroll-behavior: smooth;
   }
-
   #messages::-webkit-scrollbar { width: 3px; }
   #messages::-webkit-scrollbar-track { background: transparent; }
   #messages::-webkit-scrollbar-thumb { background: var(--border-med); border-radius: 2px; }
-
   .msg-row {
     display: flex;
     gap: 10px;
     align-items: flex-end;
     animation: msg-in 0.25s ease-out;
   }
-
   @keyframes msg-in {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
   .msg-row.user { flex-direction: row-reverse; }
-
   .avatar {
     width: 28px;
     height: 28px;
@@ -210,17 +177,14 @@
     letter-spacing: 0.04em;
     margin-bottom: 2px;
   }
-
   .avatar.bot {
     background: var(--lyric-blue);
     color: #fff;
   }
-
   .avatar.user-av {
     background: var(--surface2);
     color: var(--text-2);
   }
-
   .bubble {
     max-width: 72%;
     padding: 12px 16px;
@@ -229,26 +193,21 @@
     border-radius: 14px;
     letter-spacing: -0.01em;
   }
-
   .bubble.bot {
     background: var(--chat-bot-bg);
     border: 1px solid var(--border);
     color: var(--text);
     border-bottom-left-radius: 4px;
   }
-
   .bubble.user {
     background: var(--chat-user-bg);
     color: var(--chat-user-text);
     border-bottom-right-radius: 4px;
     box-shadow: 0 2px 8px rgba(36,36,245,0.2);
   }
-
   .bubble a { color: var(--lyric-blue); text-decoration: underline; text-underline-offset: 2px; }
   .bubble.user a { color: #fff; }
   .bubble.bot strong { font-weight: 600; }
-
-  /* feedback */
   .feedback-row {
     display: flex;
     gap: 6px;
@@ -256,7 +215,6 @@
     margin-left: 38px;
     animation: msg-in 0.3s ease-out 0.1s both;
   }
-
   .fb-btn {
     font-size: 11px;
     font-family: 'JetBrains Mono', monospace;
@@ -273,12 +231,9 @@
     align-items: center;
     gap: 4px;
   }
-
   .fb-btn:hover { background: var(--surface2); color: var(--text); }
   .fb-btn.good:hover { background: var(--green-light); color: var(--green); border-color: var(--green); }
   .fb-btn.bad:hover  { background: var(--red-light); color: var(--red); border-color: var(--red); }
-
-  /* typing */
   .typing-bubble {
     background: var(--chat-bot-bg);
     border: 1px solid var(--border);
@@ -289,7 +244,6 @@
     gap: 5px;
     align-items: center;
   }
-
   .typing-bubble span {
     width: 6px;
     height: 6px;
@@ -298,16 +252,12 @@
     opacity: 0.4;
     animation: blink 1.3s infinite;
   }
-
   .typing-bubble span:nth-child(2) { animation-delay: 0.18s; }
   .typing-bubble span:nth-child(3) { animation-delay: 0.36s; }
-
   @keyframes blink {
     0%, 80%, 100% { opacity: 0.2; }
     40% { opacity: 1; }
   }
-
-  /* ── Input bar ── */
   .input-bar {
     border-top: 1px solid var(--border);
     padding: 14px 16px;
@@ -316,7 +266,6 @@
     align-items: flex-end;
     background: var(--surface);
   }
-
   #user-input {
     flex: 1;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -334,10 +283,8 @@
     transition: border-color 0.15s, background 0.15s;
     overflow-y: auto;
   }
-
   #user-input::placeholder { color: var(--text-3); }
   #user-input:focus { border-color: var(--lyric-blue); background: #fff; box-shadow: 0 0 0 3px rgba(36,36,245,0.08); }
-
   #send-btn {
     width: 42px;
     height: 42px;
@@ -352,13 +299,10 @@
     transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
     box-shadow: 0 2px 8px rgba(36,36,245,0.25);
   }
-
   #send-btn:hover { background: var(--lyric-blue-dark); box-shadow: 0 4px 12px rgba(36,36,245,0.35); }
   #send-btn:active { transform: scale(0.93); }
   #send-btn:disabled { background: var(--border-med); cursor: not-allowed; box-shadow: none; }
   #send-btn svg { width: 16px; height: 16px; }
-
-  /* ── Footer ── */
   footer {
     width: 100%;
     max-width: 760px;
@@ -367,7 +311,6 @@
     align-items: center;
     justify-content: space-between;
   }
-
   .footer-note {
     font-family: 'JetBrains Mono', monospace;
     text-transform: uppercase;
@@ -375,15 +318,11 @@
     letter-spacing: 0.06em;
     color: var(--text-3);
   }
-
   .footer-note a {
     color: var(--text-2);
     text-decoration: none;
   }
-
   .footer-note a:hover { text-decoration: underline; color: var(--lyric-blue); }
-
-  /* ── Suggested questions ── */
   .suggestions {
     display: flex;
     flex-wrap: wrap;
@@ -391,7 +330,6 @@
     padding: 0 24px 12px;
     animation: msg-in 0.3s ease-out;
   }
-
   .suggestion-chip {
     font-size: 12px;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -404,15 +342,12 @@
     transition: all 0.15s;
     font-weight: 500;
   }
-
   .suggestion-chip:hover {
     background: var(--lyric-blue);
     color: #fff;
     border-color: var(--lyric-blue);
     box-shadow: 0 2px 8px rgba(36,36,245,0.2);
   }
-
-  /* ── Responsive ── */
   @media (max-width: 600px) {
     header, .chat-wrap, footer { padding-left: 14px; padding-right: 14px; }
     .bubble { max-width: 85%; }
@@ -448,7 +383,7 @@
     <div id="messages"></div>
     <div id="suggestions" class="suggestions" style="display:none"></div>
     <div class="input-bar">
-      <textarea id="user-input" placeholder="Ask Tempo anything about Lyric…" rows="1"></textarea>
+      <textarea id="user-input" placeholder="Ask Tempo anything about Lyric..." rows="1"></textarea>
       <button id="send-btn" aria-label="Send">
         <svg viewBox="0 0 16 16" fill="none">
           <path d="M13.5 2.5L7 9M13.5 2.5L9 13.5L7 9M13.5 2.5L2.5 6.5L7 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -459,12 +394,18 @@
 </div>
 
 <footer>
-  <span class="footer-note">Questions? <a href="/cdn-cgi/l/email-protection#2050454f504c45604c595249430e54454348"><span class="__cf_email__" data-cfemail="cebeaba1bea2ab8ea2b7bca7ade0baabada6">[email&#160;protected]</span></a></span>
+  <span class="footer-note">Questions? <a id="footer-email" href="#">people at lyric.tech</a></span>
   <span class="footer-note">Powered by Lyric People Ops</span>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-const SUGGESTIONS = [
+<script>
+// Build the email link in JS so Cloudflare email protection does not mangle it
+(function(){
+  var u='people';var d='lyric.tech';var a=document.getElementById('footer-email');
+  a.href='mail'+'to:'+u+'@'+d;a.textContent=u+'@'+d;
+})();
+
+var SUGGESTIONS = [
   "When will I get my laptop?",
   "Who handles payroll questions?",
   "What time does my first day start?",
@@ -472,29 +413,34 @@ const SUGGESTIONS = [
   "How do I access Slack and Notion?"
 ];
 
-let history = [];
-let msgCount = 0;
-let lastBotReply = '';
+var history = [];
+var msgCount = 0;
+var lastBotReply = "";
 
-const messagesEl = document.getElementById('messages');
-const inputEl = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
-const suggestionsEl = document.getElementById('suggestions');
+var messagesEl = document.getElementById("messages");
+var inputEl = document.getElementById("user-input");
+var sendBtn = document.getElementById("send-btn");
+var suggestionsEl = document.getElementById("suggestions");
 
 function init() {
-  addBotMessage("Hi there! I'm Tempo, your People sidekick at Lyric. 👋\n\nI help you stay in tune from before day one and beyond — whether it's pre-boarding questions, company policies, benefits, payroll, or anything else People-related.\n\nWhat's on your mind?");
+  addBotMessage("Hi there! I\u2019m Tempo, your People sidekick at Lyric. \uD83D\uDC4B\n\nI help you stay in tune from before day one and beyond \u2014 whether it\u2019s pre-boarding questions, company policies, benefits, payroll, or anything else People-related.\n\nWhat\u2019s on your mind?");
   showSuggestions();
 }
 
 function showSuggestions() {
-  suggestionsEl.style.display = 'flex';
-  suggestionsEl.innerHTML = SUGGESTIONS.map(s =>
-    `<button class="suggestion-chip" onclick="useSuggestion('${s.replace(/'/g,"\\\'")}')">${s}</button>`
-  ).join('');
+  suggestionsEl.style.display = "flex";
+  suggestionsEl.innerHTML = "";
+  SUGGESTIONS.forEach(function(s) {
+    var btn = document.createElement("button");
+    btn.className = "suggestion-chip";
+    btn.textContent = s;
+    btn.addEventListener("click", function() { useSuggestion(s); });
+    suggestionsEl.appendChild(btn);
+  });
 }
 
 function hideSuggestions() {
-  suggestionsEl.style.display = 'none';
+  suggestionsEl.style.display = "none";
 }
 
 function useSuggestion(text) {
@@ -504,138 +450,159 @@ function useSuggestion(text) {
 }
 
 function addBotMessage(text) {
-  const row = document.createElement('div');
-  row.className = 'msg-row bot';
-  const av = document.createElement('div');
-  av.className = 'avatar bot';
-  av.textContent = 'T';
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble bot';
+  var row = document.createElement("div");
+  row.className = "msg-row bot";
+  var av = document.createElement("div");
+  av.className = "avatar bot";
+  av.textContent = "T";
+  var bubble = document.createElement("div");
+  bubble.className = "bubble bot";
   bubble.innerHTML = formatText(text);
   row.appendChild(av);
   row.appendChild(bubble);
   messagesEl.appendChild(row);
-  scroll();
+  doScroll();
   return row;
 }
 
 function addUserMessage(text) {
-  const row = document.createElement('div');
-  row.className = 'msg-row user';
-  const av = document.createElement('div');
-  av.className = 'avatar user-av';
-  av.textContent = 'You';
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble user';
+  var row = document.createElement("div");
+  row.className = "msg-row user";
+  var av = document.createElement("div");
+  av.className = "avatar user-av";
+  av.textContent = "You";
+  var bubble = document.createElement("div");
+  bubble.className = "bubble user";
   bubble.textContent = text;
   row.appendChild(av);
   row.appendChild(bubble);
   messagesEl.appendChild(row);
-  scroll();
+  doScroll();
 }
 
 function addTyping() {
-  const row = document.createElement('div');
-  row.className = 'msg-row bot';
-  row.id = 'typing-row';
-  const av = document.createElement('div');
-  av.className = 'avatar bot';
-  av.textContent = 'T';
-  const bubble = document.createElement('div');
-  bubble.className = 'typing-bubble';
-  bubble.innerHTML = '<span></span><span></span><span></span>';
+  var row = document.createElement("div");
+  row.className = "msg-row bot";
+  row.id = "typing-row";
+  var av = document.createElement("div");
+  av.className = "avatar bot";
+  av.textContent = "T";
+  var bubble = document.createElement("div");
+  bubble.className = "typing-bubble";
+  bubble.innerHTML = "<span></span><span></span><span></span>";
   row.appendChild(av);
   row.appendChild(bubble);
   messagesEl.appendChild(row);
-  scroll();
+  doScroll();
 }
 
 function removeTyping() {
-  const t = document.getElementById('typing-row');
+  var t = document.getElementById("typing-row");
   if (t) t.remove();
 }
 
 function addFeedback(userQ, botReply) {
-  const row = document.createElement('div');
-  row.className = 'feedback-row';
-  row.dataset.question = userQ;
-  row.dataset.answer = botReply;
-  row.innerHTML = `
-    <button class="fb-btn good" onclick="feedback(this,'helpful')">👍 Helpful</button>
-    <button class="fb-btn bad"  onclick="feedback(this,'unhelpful')">👎 Not helpful</button>
-  `;
+  var row = document.createElement("div");
+  row.className = "feedback-row";
+  row.setAttribute("data-question", userQ);
+  row.setAttribute("data-answer", botReply);
+
+  var goodBtn = document.createElement("button");
+  goodBtn.className = "fb-btn good";
+  goodBtn.innerHTML = "\uD83D\uDC4D Helpful";
+  goodBtn.addEventListener("click", function() { doFeedback(row, "helpful"); });
+
+  var badBtn = document.createElement("button");
+  badBtn.className = "fb-btn bad";
+  badBtn.innerHTML = "\uD83D\uDC4E Not helpful";
+  badBtn.addEventListener("click", function() { doFeedback(row, "unhelpful"); });
+
+  row.appendChild(goodBtn);
+  row.appendChild(badBtn);
   messagesEl.appendChild(row);
-  scroll();
+  doScroll();
 }
 
-function feedback(btn, type) {
-  const row = btn.closest('.feedback-row');
-  const q = row.dataset.question || '';
-  const a = row.dataset.answer || '';
-  logFeedback(q, type, a);
-  if (type === 'helpful') {
-    row.innerHTML = '<span style="font-size:11px;color:var(--text-3);font-family:JetBrains Mono,monospace;text-transform:uppercase;letter-spacing:0.04em">Thanks — glad that helped!</span>';
+function doFeedback(row, type) {
+  var q = row.getAttribute("data-question") || "";
+  var a = row.getAttribute("data-answer") || "";
+  logEntry(q, type, a);
+  if (type === "helpful") {
+    row.innerHTML = "<span style=\"font-size:11px;color:var(--text-3);font-family:JetBrains Mono,monospace;text-transform:uppercase;letter-spacing:0.04em\">Thanks \u2014 glad that helped!</span>";
   } else {
-    row.innerHTML = '<span style="font-size:11px;color:var(--text-3)">Sorry about that! Email <a href="mailto:people@lyric.tech" style="color:var(--lyric-blue)">people@lyric.tech</a> and we\'ll circle back to you.</span>';
+    var u="people";var d="lyric.tech";
+    row.innerHTML = "<span style=\"font-size:11px;color:var(--text-3)\">Sorry about that! Email <a href=\"mail"+"to:"+u+"@"+d+"\" style=\"color:var(--lyric-blue)\">"+u+"@"+d+"</a> and we'll circle back to you.</span>";
   }
-  scroll();
+  doScroll();
 }
 
 function formatText(text) {
   return text
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\n/g,'<br>');
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
+    .replace(/\n/g,"<br>");
 }
 
-function scroll() {
-  setTimeout(() => { messagesEl.scrollTop = messagesEl.scrollHeight; }, 30);
+function doScroll() {
+  setTimeout(function() { messagesEl.scrollTop = messagesEl.scrollHeight; }, 30);
 }
 
-async function logFeedback(question, type, answer) {
+function logEntry(question, type, answer) {
   try {
-    await fetch('/api/log', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question, type, answer: answer || '', ts: new Date().toISOString() })
+    fetch("/api/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: question, type: type, answer: answer || "", ts: new Date().toISOString() })
     });
   } catch(e) {}
 }
 
-async function sendMessage() {
-  const text = inputEl.value.trim();
+function sendMessage() {
+  var text = inputEl.value.trim();
   if (!text) return;
-  inputEl.value = '';
-  inputEl.style.height = '';
+  inputEl.value = "";
+  inputEl.style.height = "";
   sendBtn.disabled = true;
   hideSuggestions();
   addUserMessage(text);
-  history.push({ role: 'user', content: text });
+  history.push({ role: "user", content: text });
   addTyping();
 
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ history })
-    });
-    const data = await res.json();
+  fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ history: history })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
     removeTyping();
-    const reply = data.reply || "I'm having trouble right now. Please email people@lyric.tech and we'll get back to you!";
-    history.push({ role: 'assistant', content: reply });
+    var reply = data.reply || "I'm having trouble right now. Please email people at lyric.tech and we'll get back to you!";
+    history.push({ role: "assistant", content: reply });
     addBotMessage(reply);
     lastBotReply = reply;
     msgCount++;
     if (msgCount % 4 === 0) showSuggestions();
-    logFeedback(text, 'asked', reply);
+    logEntry(text, "asked", reply);
     addFeedback(text, reply);
-  } catch(e) {
+    sendBtn.disabled = false;
+  })
+  .catch(function() {
     removeTyping();
-    addBotMessage("Something went wrong on my end. Please email **people@lyric.tech** and we'll help you directly.");
-  }
-  sendBtn.disabled = false;
+    addBotMessage("Something went wrong on my end. Please email people at lyric.tech and we'll help you directly.");
+    sendBtn.disabled = false;
+  });
 }
 
-// Auto-resize textarea
-inputEl.addEventListener('input', function() {
-  this.style.height = 'auto
+inputEl.addEventListener("input", function() {
+  this.style.height = "auto";
+  this.style.height = Math.min(this.scrollHeight, 120) + "px";
+});
+
+inputEl.addEventListener("keydown", function(e) {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+init();
+</script>
+</body>
+</html>
