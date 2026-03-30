@@ -413,7 +413,7 @@ var SUGGESTIONS = [
   "How do I access Slack and Notion?"
 ];
 
-var history = [];
+var chatHistory = [];
 var msgCount = 0;
 var lastBotReply = "";
 
@@ -565,19 +565,19 @@ function sendMessage() {
   sendBtn.disabled = true;
   hideSuggestions();
   addUserMessage(text);
-  history.push({ role: "user", content: text });
+  chatHistory.push({ role: "user", content: text });
   addTyping();
 
   fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ history: history })
+    body: JSON.stringify({ history: chatHistory })
   })
   .then(function(res) { return res.json(); })
   .then(function(data) {
     removeTyping();
     var reply = data.reply || "I'm having trouble right now. Please email people at lyric.tech and we'll get back to you!";
-    history.push({ role: "assistant", content: reply });
+    chatHistory.push({ role: "assistant", content: reply });
     addBotMessage(reply);
     lastBotReply = reply;
     msgCount++;
