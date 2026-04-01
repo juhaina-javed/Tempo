@@ -537,10 +537,18 @@ function doFeedback(row, type) {
 }
 
 function formatText(text) {
-  return text
+  var s = text
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-    .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
-    .replace(/\n/g,"<br>");
+    .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function(m, label, url) {
+    return "<a href=\"" + url + "\" target=\"_blank\" rel=\"noopener\">" + label + "</a>";
+  });
+  s = s.replace(/(^|[^"'>])(https?:\/\/[^\s<]+)/g, function(m, prefix, url) {
+    var clean = url.replace(/[.,;:!?)]+$/, "");
+    return prefix + "<a href=\"" + clean + "\" target=\"_blank\" rel=\"noopener\">" + clean + "</a>";
+  });
+  s = s.replace(/\n/g,"<br>");
+  return s;
 }
 
 function doScroll() {
