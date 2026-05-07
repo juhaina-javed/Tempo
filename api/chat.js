@@ -1,8 +1,8 @@
 // api/chat.js — Vercel serverless function
-// Reads knowledge base from Google Sheets, calls Google Gemini (free tier)
+// Reads knowledge base from Google Sheets, calls Claude Haiku
 
 const SHEET_ID  = process.env.SHEET_ID;
-const GEMINI_KEY = process.env.GEMINI_API_KEY;
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const SHEET_TAB = process.env.SHEET_TAB || 'KB';
 
 // Cache KB for 5 minutes to avoid hitting Sheets on every message
@@ -90,8 +90,8 @@ HOW TO BEHAVE:
 - For location-sensitive questions (payroll, taxes, benefits, holidays, contracts), ALWAYS ask which country the person is in before answering, unless they have already told you.
 - Ask clarifying questions when context meaningfully changes the answer — one question at a time, keep it brief.
 - If the KB doesn't have a clear answer, say: "I don't have that information just yet — please reach out to people@lyric.tech and we'll get back to you."
-- When a KB entry has a Source Link, ALWAYS include it in your answer on the first response — do not wait for the user to ask for it. Format it as a markdown link like [Pre-Boarding Guide](https://docs.google.com/...) or if a label isn't natural, just paste the full URL. Never mention a resource exists without including its link.
-- When ending your answer, always include the escalation contact. Format it as: "Questions? Reach out to **Full Name** (**@slackhandle** on Slack)." — use the person's actual name and Slack handle from the KB. Do NOT put the email address as the name. If no escalation contact is listed for a topic, use people@lyric.tech.
+- When a KB entry has a Source Link, ALWAYS include it in your first answer — don't wait for the user to ask. Format links as markdown: [descriptive label](url). For example: "Check out the [Pre-Boarding and Onboarding Guide](https://docs.google.com/...) for full details." Never paste a raw URL — always use a descriptive label.
+- When ending your answer, always include the escalation contact. Format it as: "Questions? Reach **Full Name** (**@slackhandle** on Slack)." — use the person's actual name and Slack handle from the KB. Do NOT put the email address as the name. If no escalation contact is listed for a topic, use people@lyric.tech.
 - Be warm, encouraging, and human. Use "you" or "your" naturally — never call them "employees."
 - Keep answers concise: 2-4 short paragraphs or a short bullet list. Don't pad.
 - Use **bold** (with asterisks) sparingly for key info like email addresses, Slack handles, or important dates.
@@ -119,41 +119,38 @@ export default async function handler(req, res) {
     const kb = await fetchKB();
     const systemPrompt = buildSystemPrompt(kb);
 
-    // Gemini uses "user" and "model" roles (not "assistant")
-    const geminiContents = safeHistory.map(m => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }]
+    // Claude API uses "user" and "assistant" roles (same as our frontend)
+    const claudeMessages = safeHistory.map(m => ({
+      role: m.role,
+      content: m.content
     }));
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          system_instruction: {
-            parts: [{ text: systemPrompt }]
-          },
-          contents: geminiContents,
-          generationConfig: {
-            maxOutputTokens: 1024,
-            temperature: 0.4
-          }
-        })
-      }
-    );
+    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages: claudeMessages
+      })
+    });
 
-    if (!geminiRes.ok) {
-      const err = await geminiRes.text();
-      console.error('Gemini error:', err);
+    if (!claudeRes.ok) {
+      const err = await claudeRes.text();
+      console.error('Claude error:', err);
       return res.status(502).json({
         error: 'AI service error',
         reply: "I'm having a bit of trouble right now. Please email **people@lyric.tech** and we'll help you directly."
       });
     }
 
-    const data = await geminiRes.json();
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text
+    const data = await claudeRes.json();
+    const reply = data.content?.[0]?.text
       || "Sorry, I couldn't generate a response. Please email people@lyric.tech.";
 
     return res.status(200).json({ reply });
